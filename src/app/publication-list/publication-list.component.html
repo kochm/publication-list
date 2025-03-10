@@ -1,4 +1,9 @@
 <div class="container">
+
+  <div *ngIf="sourceTitle" class="row">
+    <em>{{sourceTitle}}</em>
+  </div>
+
   <div class="row">
     <div class="col-3">
 <button (click)="sortPublicationsAsc()">Sort Asc</button>
@@ -18,7 +23,12 @@
     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
       <div class="accordion-body">
 <ul class="filter">
-  <li *ngFor="let value of facetsAuthor">
+  <li *ngFor="let value of facetsAuthor.slice(0,15)">
+<input #authorCheckBox{{value}}
+    id="authorCheckBox"
+    type="checkbox"
+    [checked]=false
+    (change)="onCheckboxAuthor(value)" />
     {{value}} ({{facetsAuthorCount.get(value)}})
   </li>
 </ul>
@@ -59,7 +69,12 @@
     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
       <div class="accordion-body">
 <ul class="filter">
-  <li *ngFor="let value of facetsKeyword">
+  <li *ngFor="let value of facetsKeyword.slice(0,15)">
+<input #keywordCheckBox{{value}}
+    id="keywordCheckBox"
+    type="checkbox"
+    [checked]=false
+    (change)="onCheckboxKeyword(value)" />
     {{value}} ({{facetsKeywordCount.get(value)}})
   </li>
 </ul>
@@ -94,19 +109,25 @@
     </div>
     <div class="col-9 overflow-scroll">
 
-<ul class="publications">
-
+<div *ngIf="filteredPublications">
 <em>{{filteredPublications.length}} publications</em>
+
+<ul class="publications">
 
   <li *ngFor="let publication of filteredPublications"
     [class.selected]="publication === selectedPublication"
     (click)="onSelect(publication)">
 {{publication.year}} {{publication.title}} <em class="container" *ngIf="publication.doi"><a href="https://doi.org/{{publication.doi}}" target="_doi">doi</a></em>
+<div><small>{{this.formatPublicationAuthors(publication.author)}}</small></div>
 <div style="display:show;" id="collapse{{publication.id}}">
-Test
+{{this.getPublicationDetails(publication.id)}}
+<p>
+{{publication.abstract}}
+</p>
 </div>
   </li>
 </ul>
+</div>
 
     </div>
   </div>
